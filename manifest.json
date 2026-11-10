@@ -1,0 +1,24 @@
+
+{
+  "name": "Mission Log - NASA Space Explorer",
+  "short_name": "Mission Log",
+  "description": "Explore NASA's astronomy pictures and save your favorites.",
+  "id": "/nasa-space-explorer/",
+  "start_url": "/nasa-space-explorer/",
+  "scope": "/nasa-space-explorer/",
+  "display": "standalone",
+  "background_color": "#091728",
+  "theme_color": "#091728",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
