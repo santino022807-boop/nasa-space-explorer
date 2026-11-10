@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission Log | NASA Space Explorer</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#091728;color:#f7f9fc;font-family:Arial,sans-serif;line-height:1.5}
+a{color:#99ceff}button,input{font:inherit}
+button{cursor:pointer}
+.wrap{width:min(1050px,92%);margin:auto}
+.top{padding:18px 0;border-bottom:1px solid #37526d;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.brand{font-weight:800;letter-spacing:1px}
+.tag{border:1px solid #56708a;border-radius:40px;padding:6px 10px;font-size:12px;color:#bdd7f2}
+header{padding:52px 0 34px;position:relative}
+.tiny{color:#f78979;font-weight:bold;letter-spacing:2px;font-size:12px}
+h1{font-size:clamp(40px,7vw,70px);line-height:1.04;margin:12px 0;letter-spacing:-2px}
+h1 span{color:#8bc8ff}
+header p{color:#c1d1e1;max-width:610px;font-size:17px}
+.orbit{position:absolute;right:5%;top:45px;font-size:110px}
+.panel{background:#152b44;border:1px solid #4b6888;border-radius:16px;padding:22px}
+h2{margin:0 0 15px;font-size:24px}
+.fields{display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:12px}
+label{display:block;font-size:13px;font-weight:bold}
+input{display:block;margin-top:6px;width:100%;border:1px solid #67819a;background:#081b31;color:#fff;padding:12px;border-radius:8px;color-scheme:dark;min-height:46px}
+.go{border:0;background:#f84a36;color:#fff;padding:12px 17px;border-radius:8px;font-weight:bold;min-height:46px}
+.go:disabled{opacity:.55}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.chip,.savedToggle{border:1px solid #587593;background:#244362;color:#f4f9ff;border-radius:8px;padding:8px 12px}
+#status{color:#b7d5ed;min-height:35px;font-size:14px;margin:17px 0}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:14px 0 18px}
+.bar h2{margin:0}
+.bar p{margin:4px 0 0;color:#a9c1da;font-size:13px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:60px}
+.card{border:1px solid #34536f;background:#142a43;border-radius:12px;overflow:hidden}
+.photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#203d5e}
+.missing{aspect-ratio:4/3;display:grid;place-items:center;background:#1d3b5e;text-align:center;padding:15px}
+.body{padding:16px}
+.date{font-size:12px;color:#8fbeea}
+.body h3{margin:7px 0;font-size:19px}
+.body p{color:#b6c9db;font-size:13px}
+.buttons{display:flex;gap:8px;flex-wrap:wrap}
+.small{border:1px solid #65819d;background:transparent;color:#fff;border-radius:7px;padding:7px 10px;font-size:13px}
+.empty{grid-column:1/-1;border:1px dashed #56708b;border-radius:12px;padding:35px;text-align:center;color:#c2d9ee}
+footer{border-top:1px solid #38536e;padding:22px 0 40px;color:#b5c8dc;font-size:13px}
+footer a{margin-right:14px}
+@media(max-width:780px){
+.orbit{display:none}
+.gallery{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:570px){
+header{padding:32px 0}
+.fields{grid-template-columns:1fr}
+.gallery{grid-template-columns:1fr}
+.panel{padding:16px}
+.top{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="top">
+<span class="brand">🚀 MISSION LOG</span>
+<span class="tag">NASA SPACE EXPLORER</span>
+</nav>
+
+<header>
+<div class="tiny">EXPLORE THE UNIVERSE</div>
+<h1>Your window<br>to <span>space.</span></h1>
+<p>Pick a date range to discover real NASA space pictures. Save your favorites and learn the story behind each discovery.</p>
+<div class="orbit">🪐</div>
+</header>
+
+<section class="panel">
+<h2>Choose your mission dates</h2>
+<form id="form" class="fields">
+<label>Start date
+<input id="start" type="date" required>
+</label>
+<label>End date
+<input id="end" type="date" required>
+</label>
+<button class="go" id="search" type="submit">Explore photos ↗</button>
+</form>
+<div class="quick">
+<button class="chip" type="button" data-days="3">Last 3 days</button>
+<button class="chip" type="button" data-days="7">Last 7 days</button>
+<button class="chip" type="button" id="surprise">Surprise week ✨</button>
+</div>
+</section>
+
+<p id="status" role="status">Ready to explore!</p>
+
+<div class="bar">
+<div>
+<h2>Cosmic discoveries</h2>
+<p id="count">Search NASA's archive to get started.</p>
+</div>
+<button id="favorites" type="button" class="savedToggle">☆ Favorites only</button>
+</div>
+
+<main id="gallery" class="gallery">
+<div class="empty">🔭<br>Waiting for your first space mission.</div>
+</main>
+
+<footer>
+Made for a web development class. Not an official NASA website.
+<p>
+<a href="https://science.nasa.gov/apod/" target="_blank">NASA Pictures</a>
+<a href="https://api.nasa.gov/" target="_blank">NASA API</a>
+</p>
+</footer>
+
+</div>
+
+<script>
+// NASA Space Explorer - JavaScript
+const API = "https://science.nasa.gov/wp-json/wp/v2/apod-basic";
+const el = id => document.getElementById(id);
+
+let entries = [];
+let favoritesOnly = false;
+let saved = new Set();
+
+try {
+ saved = new Set(JSON.parse(localStorage.getItem("space-favorites") || "[]"));
+} catch(e) {}
+
+function iso(d) {
+ return d.getFullYear()+"-"+
+ String(d.getMonth()+1).padStart(2,"0")+"-"+
+ String(d.getDate()).padStart(2,"0");
+}
+
+function shift(d,n) {
+ const x = new Date(d+"T12:00:00Z");
+ x.setUTCDate(x.getUTCDate()+n);
+ return x.toISOString().slice(0,10);
+}
+
+function apiDate(d) {
+ return d.slice(2).replaceAll("-","");
+}
+
+function plain(s) {
+ const node = document.createElement("div");
+ node.innerHTML = String(s || "");
+ return node.textContent.trim();
+}
+
+function setStatus(s) {
+ el("status").textContent=s;
+}
+
+function setRange(n) {
+ const end=shift(iso(new Date()),-1);
+ el("end").value=end;
+ el("start").value=shift(end,1-n);
+ setStatus("Dates selected! Click Explore photos.");
+}
+
+function imageUrl(item) {
+ if(item.media_type!=="image" || !item.hdurl) return "";
+ try {
+  const u=new URL(item.hdurl);
+  if(!["https:","http:"].includes(u.protocol)) return "";
+  if(u.hostname==="assets.science.nasa.gov" &&
+     u.pathname.includes("/dynamicimage/")) {
+   u.searchParams.set("w","700");
+   u.searchParams.set("h","525");
+   u.searchParams.set("fit","clip");
+  }
+  return u.href;
+ } catch(e) { return ""; }
+}
+
+function createCard(item) {
+ const card=document.createElement("article");
+ card.className="card";
+
+ const url=imageUrl(item);
+
+ if(url) {
+  const img=document.createElement("img");
+  img.className="photo";
+  img.src=url;
+  img.loading="lazy";
+  img.alt=plain(item.alt || item.title);
+  img.onerror=()=>{
+   const fallback=document.createElement("div");
+   fallback.className="missing";
+   fallback.textContent="Image preview unavailable";
+   img.replaceWith(fallback);
+  };
+  card.appendChild(img);
+ } else {
+  const missing=document.createElement("div");
+  missing.className="missing";
+  missing.textContent=item.media_type==="video"
+   ? "Video entry — view on NASA"
+   : "Image unavailable";
+  card.appendChild(missing);
+ }
+
+ const body=document.createElement("div");
+ body.className="body";
+
+ const date=document.createElement("div");
+ date.className="date";
+ date.textContent=item.date;
+
+ const title=document.createElement("h3");
+ title.textContent=plain(item.title)||"Space discovery";
+
+ const description=document.createElement("p");
+ description.textContent=plain(item.explanation).slice(0,130)+"…";
+
+ const buttons=document.createElement("div");
+ buttons.className="buttons";
+
+ const save=document.createElement("button");
+ save.type="button";
+ save.className="small";
+ save.textContent=saved.has(item.date) ? "★ Saved" : "☆ Save";
+
+ save.onclick=()=>{
+  if(saved.has(item.date)) saved.delete(item.date);
+  else saved.add(item.date);
+  try {
+   localStorage.setItem("space-favorites",JSON.stringify([...saved]));
+  } catch(e) {}
+  render();
+ };
+
+ const link=document.createElement("a");
+ link.className="small";
+ link.textContent="Read on NASA ↗";
+ link.target="_blank";
+ link.rel="noopener noreferrer";
+ const destination=item.permalink || item.url || "https://science.nasa.gov/apod/";
+ link.href=destination.startsWith("https://")
+   ? destination : "https://science.nasa.gov/apod/";
+
+ buttons.append(save,link);
+ body.append(date,title,description,buttons);
+ card.appendChild(body);
+
+ return card;
+}
+
+function render() {
+ const gallery=el("gallery");
+ gallery.replaceChildren();
+
+ const visible=entries.filter(item=>
+  !favoritesOnly || saved.has(item.date)
+ );
+
+ el("favorites").textContent=favoritesOnly
+   ? "★ Show all" : "☆ Favorites only";
+ el("count").textContent=visible.length+" discoveries shown";
+
+ if(!visible.length) {
+  const empty=document.createElement("div");
+  empty.className="empty";
+  empty.textContent="No pictures to show. Try a different date range.";
+  gallery.appendChild(empty);
+ } else {
+  visible.forEach(item=>gallery.appendChild(createCard(item)));
+ }
+}
+
+async function searchNASA() {
+ const start=el("start").value;
+ const end=el("end").value;
+ const today=iso(new Date());
+
+ if(!start || !end) {
+  setStatus("Please select both dates.");
+  return;
+ }
+
+ if(start>end) {
+  setStatus("The start date must be before the end date.");
+  return;
+ }
+
+ if(start<"1995-06-16" || end>today) {
+  setStatus("Please select dates between June 16, 1995 and today.");
+  return;
+ }
+
+ const days=Math.round(
+  (new Date(end+"T12:00:00Z")-
+   new Date(start+"T12:00:00Z"))/86400000
+ )+1;
+
+ if(days>14) {
+  setStatus("Choose a range of 14 days or less.");
+  return;
+ }
+
+ const btn=el("search");
+ btn.disabled=true;
+ btn.textContent="Loading...";
+ setStatus("Contacting NASA...");
+
+ try {
+  const params=new URLSearchParams({
+   date_from:apiDate(start),
+   date_to:apiDate(end),
+   per_page:String(days)
+  });
+
+  const response=await fetch(API+"?"+params);
+
+  if(!response.ok) {
+   throw new Error("NASA returned an error.");
+  }
+
+  const data=await response.json();
+
+  if(!Array.isArray(data)) {
+   throw new Error("Unexpected NASA response.");
+  }
+
+  entries=data
+   .filter(item=>item.date>=start && item.date<=end)
+   .sort((a,b)=>b.date.localeCompare(a.date));
+
+  favoritesOnly=false;
+  render();
+
+  setStatus("Loaded "+entries.length+" NASA discoveries!");
+
+ } catch(error) {
+  entries=[];
+  render();
+  setStatus("NASA could not load right now. Check your connection and try again.");
+ } finally {
+  btn.disabled=false;
+  btn.textContent="Explore photos ↗";
+ }
+}
+
+el("form").addEventListener("submit",e=>{
+ e.preventDefault();
+ searchNASA();
+});
+
+document.querySelectorAll("[data-days]").forEach(button=>{
+ button.onclick=()=>setRange(Number(button.dataset.days));
+});
+
+el("surprise").onclick=()=>{
+ const year=2010+Math.floor(Math.random()*16);
+ const month=1+Math.floor(Math.random()*12);
+ const day=1+Math.floor(Math.random()*15);
+ const start=year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+ el("start").value=start;
+ el("end").value=shift(start,6);
+ setStatus("Surprise week selected! Click Explore photos.");
+};
+
+el("favorites").onclick=()=>{
+ favoritesOnly=!favoritesOnly;
+ render();
+};
+
+const today=iso(new Date());
+el("start").max=today;
+el("end").max=today;
+setRange(7);
+</script>
+</body>
+</html>
