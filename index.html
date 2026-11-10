@@ -4,122 +4,554 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Mission Log | NASA Space Explorer</title>
+
+<!-- PWA settings -->
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#091728">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mission Log">
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#091728;color:#f7f9fc;font-family:Arial,sans-serif;line-height:1.5}
-a{color:#99ceff}button,input{font:inherit}
-button{cursor:pointer}
-.wrap{width:min(1050px,92%);margin:auto}
-.top{padding:18px 0;border-bottom:1px solid #37526d;display:flex;justify-content:space-between;align-items:center;gap:15px}
-.brand{font-weight:800;letter-spacing:1px}
-.tag{border:1px solid #56708a;border-radius:40px;padding:6px 10px;font-size:12px;color:#bdd7f2}
-header{padding:52px 0 34px;position:relative}
-.tiny{color:#f78979;font-weight:bold;letter-spacing:2px;font-size:12px}
-h1{font-size:clamp(40px,7vw,70px);line-height:1.04;margin:12px 0;letter-spacing:-2px}
-h1 span{color:#8bc8ff}
-header p{color:#c1d1e1;max-width:610px;font-size:17px}
-.orbit{position:absolute;right:5%;top:45px;font-size:110px}
-.panel{background:#152b44;border:1px solid #4b6888;border-radius:16px;padding:22px}
-h2{margin:0 0 15px;font-size:24px}
-.fields{display:grid;grid-template-columns:1fr 1fr auto;align-items:end;gap:12px}
-label{display:block;font-size:13px;font-weight:bold}
-input{display:block;margin-top:6px;width:100%;border:1px solid #67819a;background:#081b31;color:#fff;padding:12px;border-radius:8px;color-scheme:dark;min-height:46px}
-.go{border:0;background:#f84a36;color:#fff;padding:12px 17px;border-radius:8px;font-weight:bold;min-height:46px}
-.go:disabled{opacity:.55}
-.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-.chip,.savedToggle{border:1px solid #587593;background:#244362;color:#f4f9ff;border-radius:8px;padding:8px 12px}
-#status{color:#b7d5ed;min-height:35px;font-size:14px;margin:17px 0}
-.bar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:14px 0 18px}
-.bar h2{margin:0}
-.bar p{margin:4px 0 0;color:#a9c1da;font-size:13px}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-bottom:60px}
-.card{border:1px solid #34536f;background:#142a43;border-radius:12px;overflow:hidden}
-.photo{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#203d5e}
-.missing{aspect-ratio:4/3;display:grid;place-items:center;background:#1d3b5e;text-align:center;padding:15px}
-.body{padding:16px}
-.date{font-size:12px;color:#8fbeea}
-.body h3{margin:7px 0;font-size:19px}
-.body p{color:#b6c9db;font-size:13px}
-.buttons{display:flex;gap:8px;flex-wrap:wrap}
-.small{border:1px solid #65819d;background:transparent;color:#fff;border-radius:7px;padding:7px 10px;font-size:13px}
-.empty{grid-column:1/-1;border:1px dashed #56708b;border-radius:12px;padding:35px;text-align:center;color:#c2d9ee}
-footer{border-top:1px solid #38536e;padding:22px 0 40px;color:#b5c8dc;font-size:13px}
-footer a{margin-right:14px}
-@media(max-width:780px){
-.orbit{display:none}
-.gallery{grid-template-columns:repeat(2,1fr)}
+* {
+  box-sizing: border-box;
 }
-@media(max-width:570px){
-header{padding:32px 0}
-.fields{grid-template-columns:1fr}
-.gallery{grid-template-columns:1fr}
-.panel{padding:16px}
-.top{flex-wrap:wrap}
+
+body {
+  margin: 0;
+  background: #091728;
+  color: #f7f9fc;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible, a:focus-visible {
+  outline: 3px solid #ffcb71;
+  outline-offset: 3px;
+}
+
+a {
+  color: #99ceff;
+}
+
+.wrap {
+  width: min(1050px, 92%);
+  margin: auto;
+}
+
+.top {
+  padding: 18px 0;
+  border-bottom: 1px solid #37526d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.brand {
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.tag {
+  border: 1px solid #56708a;
+  border-radius: 40px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #bdd7f2;
+}
+
+header {
+  padding: 50px 0 30px;
+}
+
+.tiny {
+  color: #f78979;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 12px;
+}
+
+h1 {
+  font-size: clamp(40px, 7vw, 70px);
+  line-height: 1.04;
+  margin: 12px 0;
+  letter-spacing: -2px;
+}
+
+h1 span {
+  color: #8bc8ff;
+}
+
+header p {
+  color: #c1d1e1;
+  max-width: 610px;
+  font-size: 17px;
+}
+
+.panel {
+  background: #152b44;
+  border: 1px solid #4b6888;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin: 0 0 15px;
+  font-size: 24px;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  align-items: end;
+  gap: 12px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+input {
+  display: block;
+  margin-top: 6px;
+  width: 100%;
+  border: 1px solid #67819a;
+  background: #081b31;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  color-scheme: dark;
+  min-height: 46px;
+}
+
+.go {
+  border: none;
+  background: #f84a36;
+  color: white;
+  padding: 12px 17px;
+  border-radius: 8px;
+  font-weight: bold;
+  min-height: 46px;
+}
+
+.go:disabled {
+  opacity: .55;
+}
+
+.quick, .app-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.chip, .app-button {
+  border: 1px solid #587593;
+  background: #244362;
+  color: white;
+  border-radius: 8px;
+  padding: 9px 12px;
+}
+
+.install-button {
+  background: #e9b64f;
+  color: #091728;
+  font-weight: bold;
+  border: none;
+}
+
+#app-message {
+  font-size: 13px;
+  color: #b7d5ed;
+  min-height: 20px;
+  margin-top: 12px;
+}
+
+#status {
+  color: #b7d5ed;
+  min-height: 35px;
+  margin: 17px 0;
+}
+
+#offline-banner {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f84a36;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  z-index: 9999;
+  font-weight: bold;
+  width: max-content;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 5px 25px #0007;
+}
+
+.fact {
+  border-left: 4px solid #f84a36;
+  padding: 12px 17px;
+  margin-bottom: 25px;
+  background: #152b44;
+  border-radius: 6px;
+}
+
+.fact strong {
+  color: #ffad8c;
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin: 14px 0 18px;
+}
+
+.bar h2 {
+  margin: 0;
+}
+
+.bar p {
+  margin: 4px 0 0;
+  color: #a9c1da;
+  font-size: 13px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding-bottom: 60px;
+}
+
+.card {
+  border: 1px solid #34536f;
+  background: #142a43;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  color: white;
+  background: #203d5e;
+  overflow: hidden;
+  text-align: center;
+}
+
+.photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform .35s ease;
+}
+
+.preview:hover .photo {
+  transform: scale(1.08);
+}
+
+.missing {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  place-items: center;
+  padding: 15px;
+  background: #1d3b5e;
+}
+
+.body {
+  padding: 16px;
+}
+
+.date {
+  font-size: 12px;
+  color: #8fbeea;
+}
+
+.body h3 {
+  margin: 7px 0;
+  font-size: 19px;
+}
+
+.body p {
+  color: #b6c9db;
+  font-size: 13px;
+}
+
+.buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.small {
+  border: 1px solid #65819d;
+  background: transparent;
+  color: white;
+  border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  border: 1px dashed #56708b;
+  border-radius: 12px;
+  padding: 35px;
+  text-align: center;
+  color: #c2d9ee;
+}
+
+dialog {
+  background: #142a43;
+  color: white;
+  border: 1px solid #6a89a8;
+  border-radius: 16px;
+  padding: 20px;
+  width: min(650px, 92vw);
+  max-height: 85vh;
+  overflow: auto;
+}
+
+dialog::backdrop {
+  background: #000b;
+}
+
+dialog img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+dialog p {
+  color: #d4e0ed;
+  white-space: pre-line;
+}
+
+.close {
+  float: right;
+  background: #f84a36;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 12px;
+}
+
+footer {
+  border-top: 1px solid #38536e;
+  padding: 22px 0 40px;
+  color: #b5c8dc;
+  font-size: 13px;
+}
+
+footer a {
+  margin-right: 14px;
+}
+
+@media (max-width: 780px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 570px) {
+  header {
+    padding: 32px 0;
+  }
+
+  .fields {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+
+  .top {
+    flex-wrap: wrap;
+  }
+
+  .bar {
+    flex-wrap: wrap;
+  }
 }
 </style>
 </head>
+
 <body>
+
+<!-- Visible offline indicator -->
+<div id="offline-banner" role="status">
+  📡 You're offline. Saved NASA data may still work!
+</div>
+
 <div class="wrap">
 
 <nav class="top">
-<span class="brand">🚀 MISSION LOG</span>
-<span class="tag">NASA SPACE EXPLORER</span>
+  <span class="brand">🚀 MISSION LOG</span>
+  <span class="tag">NASA SPACE EXPLORER</span>
 </nav>
 
 <header>
-<div class="tiny">EXPLORE THE UNIVERSE</div>
-<h1>Your window<br>to <span>space.</span></h1>
-<p>Pick a date range to discover real NASA space pictures. Save your favorites and learn the story behind each discovery.</p>
-<div class="orbit">🪐</div>
+  <div class="tiny">EXPLORE THE UNIVERSE</div>
+
+  <h1>Your window<br>to <span>space.</span></h1>
+
+  <p>
+    Explore real NASA space pictures, discover new things
+    about the universe, and save your favorite discoveries.
+  </p>
 </header>
 
+<!-- Install and notification controls -->
 <section class="panel">
-<h2>Choose your mission dates</h2>
-<form id="form" class="fields">
-<label>Start date
-<input id="start" type="date" required>
-</label>
-<label>End date
-<input id="end" type="date" required>
-</label>
-<button class="go" id="search" type="submit">Explore photos ↗</button>
-</form>
-<div class="quick">
-<button class="chip" type="button" data-days="3">Last 3 days</button>
-<button class="chip" type="button" data-days="7">Last 7 days</button>
-<button class="chip" type="button" id="surprise">Surprise week ✨</button>
-</div>
+  <h2>🚀 Take Space Explorer Anywhere</h2>
+
+  <p>
+    Install Mission Log on your phone or computer.
+    You can revisit previously loaded discoveries offline.
+  </p>
+
+  <div class="app-controls">
+    <button id="installApp" class="app-button install-button">
+      📲 Install App
+    </button>
+
+    <button id="notifications" class="app-button">
+      🔔 Enable Notifications
+    </button>
+  </div>
+
+  <p id="app-message" role="status"></p>
 </section>
+
+<!-- NASA date selector -->
+<section class="panel">
+  <h2>Choose your mission dates</h2>
+
+  <form id="form" class="fields">
+
+    <label>
+      Start date
+      <input id="start" type="date" required>
+    </label>
+
+    <label>
+      End date
+      <input id="end" type="date" required>
+    </label>
+
+    <button class="go" id="search" type="submit">
+      Explore photos ↗
+    </button>
+
+  </form>
+
+  <div class="quick">
+    <button class="chip" type="button" data-days="3">
+      Last 3 days
+    </button>
+
+    <button class="chip" type="button" data-days="7">
+      Last 7 days
+    </button>
+
+    <button class="chip" type="button" id="surprise">
+      Surprise week ✨
+    </button>
+  </div>
+</section>
+
+<!-- Random space fact -->
+<div class="fact">
+  <strong>🌌 DID YOU KNOW?</strong>
+  <div id="spaceFact"></div>
+</div>
 
 <p id="status" role="status">Ready to explore!</p>
 
 <div class="bar">
-<div>
-<h2>Cosmic discoveries</h2>
-<p id="count">Search NASA's archive to get started.</p>
-</div>
-<button id="favorites" type="button" class="savedToggle">☆ Favorites only</button>
+  <div>
+    <h2>Cosmic Discoveries</h2>
+    <p id="count">Search NASA's archive to get started.</p>
+  </div>
+
+  <button id="favorites" class="app-button">
+    ☆ Favorites only
+  </button>
 </div>
 
+<!-- NASA gallery -->
 <main id="gallery" class="gallery">
-<div class="empty">🔭<br>Waiting for your first space mission.</div>
+  <div class="empty">
+    🔭 Waiting for your first space mission.
+  </div>
 </main>
 
 <footer>
-Made for a web development class. Not an official NASA website.
-<p>
-<a href="https://science.nasa.gov/apod/" target="_blank">NASA Pictures</a>
-<a href="https://api.nasa.gov/" target="_blank">NASA API</a>
-</p>
+  Student web development project.
+  Not an official NASA website.
+
+  <p>
+    <a href="https://science.nasa.gov/apod/" target="_blank" rel="noopener">
+      NASA Pictures
+    </a>
+
+    <a href="https://api.nasa.gov/" target="_blank" rel="noopener">
+      NASA API
+    </a>
+  </p>
 </footer>
 
 </div>
 
+<!-- Image details popup -->
+<dialog id="details">
+  <button id="closeDetails" class="close" type="button">
+    Close ✕
+  </button>
+
+  <h2 id="detailTitle"></h2>
+  <p id="detailDate"></p>
+  <div id="detailMedia"></div>
+  <p id="detailExplanation"></p>
+  <a id="detailLink" href="https://science.nasa.gov/apod/"
+     target="_blank" rel="noopener">
+    View original on NASA ↗
+  </a>
+</dialog>
+
 <script>
-// NASA Space Explorer - JavaScript
+// ----------------------------------
+// NASA SPACE EXPLORER
+// Student project with PWA features
+// ----------------------------------
+
 const API = "https://science.nasa.gov/wp-json/wp/v2/apod-basic";
 const el = id => document.getElementById(id);
 
@@ -127,255 +559,576 @@ let entries = [];
 let favoritesOnly = false;
 let saved = new Set();
 
+// Load saved favorites
 try {
- saved = new Set(JSON.parse(localStorage.getItem("space-favorites") || "[]"));
-} catch(e) {}
-
-function iso(d) {
- return d.getFullYear()+"-"+
- String(d.getMonth()+1).padStart(2,"0")+"-"+
- String(d.getDate()).padStart(2,"0");
+  saved = new Set(
+    JSON.parse(localStorage.getItem("space-favorites") || "[]")
+  );
+} catch (error) {
+  saved = new Set();
 }
 
-function shift(d,n) {
- const x = new Date(d+"T12:00:00Z");
- x.setUTCDate(x.getUTCDate()+n);
- return x.toISOString().slice(0,10);
+// ----------------------------------
+// Date helpers
+// ----------------------------------
+
+function iso(d) {
+  return d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
+}
+
+function shift(date, days) {
+  const d = new Date(date + "T12:00:00Z");
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
 }
 
 function apiDate(d) {
- return d.slice(2).replaceAll("-","");
+  return d.slice(2).replaceAll("-", "");
 }
 
-function plain(s) {
- const node = document.createElement("div");
- node.innerHTML = String(s || "");
- return node.textContent.trim();
+function plain(text) {
+  const doc = new DOMParser().parseFromString(
+    String(text || ""), "text/html"
+  );
+  return (doc.body.textContent || "").trim();
 }
 
-function setStatus(s) {
- el("status").textContent=s;
+function setStatus(message) {
+  el("status").textContent = message;
 }
 
-function setRange(n) {
- const end=shift(iso(new Date()),-1);
- el("end").value=end;
- el("start").value=shift(end,1-n);
- setStatus("Dates selected! Click Explore photos.");
+function appMessage(message) {
+  el("app-message").textContent = message;
 }
+
+function setRange(days) {
+  const end = shift(iso(new Date()), -1);
+
+  el("end").value = end;
+  el("start").value = shift(end, 1 - days);
+
+  setStatus("Dates selected! Click Explore photos.");
+}
+
+// ----------------------------------
+// NASA images
+// ----------------------------------
 
 function imageUrl(item) {
- if(item.media_type!=="image" || !item.hdurl) return "";
- try {
-  const u=new URL(item.hdurl);
-  if(!["https:","http:"].includes(u.protocol)) return "";
-  if(u.hostname==="assets.science.nasa.gov" &&
-     u.pathname.includes("/dynamicimage/")) {
-   u.searchParams.set("w","700");
-   u.searchParams.set("h","525");
-   u.searchParams.set("fit","clip");
+  if (item.media_type !== "image" || !item.hdurl) {
+    return "";
   }
-  return u.href;
- } catch(e) { return ""; }
+
+  try {
+    const url = new URL(item.hdurl);
+
+    if (url.protocol !== "https:") return "";
+
+    if (
+      url.hostname === "assets.science.nasa.gov" &&
+      url.pathname.includes("/dynamicimage/")
+    ) {
+      url.searchParams.set("w", "700");
+      url.searchParams.set("h", "525");
+      url.searchParams.set("fit", "clip");
+    }
+
+    return url.href;
+  } catch (error) {
+    return "";
+  }
 }
 
-function createCard(item) {
- const card=document.createElement("article");
- card.className="card";
+function nasaPage(item) {
+  const value = item.permalink || item.url || "";
 
- const url=imageUrl(item);
-
- if(url) {
-  const img=document.createElement("img");
-  img.className="photo";
-  img.src=url;
-  img.loading="lazy";
-  img.alt=plain(item.alt || item.title);
-  img.onerror=()=>{
-   const fallback=document.createElement("div");
-   fallback.className="missing";
-   fallback.textContent="Image preview unavailable";
-   img.replaceWith(fallback);
-  };
-  card.appendChild(img);
- } else {
-  const missing=document.createElement("div");
-  missing.className="missing";
-  missing.textContent=item.media_type==="video"
-   ? "Video entry — view on NASA"
-   : "Image unavailable";
-  card.appendChild(missing);
- }
-
- const body=document.createElement("div");
- body.className="body";
-
- const date=document.createElement("div");
- date.className="date";
- date.textContent=item.date;
-
- const title=document.createElement("h3");
- title.textContent=plain(item.title)||"Space discovery";
-
- const description=document.createElement("p");
- description.textContent=plain(item.explanation).slice(0,130)+"…";
-
- const buttons=document.createElement("div");
- buttons.className="buttons";
-
- const save=document.createElement("button");
- save.type="button";
- save.className="small";
- save.textContent=saved.has(item.date) ? "★ Saved" : "☆ Save";
-
- save.onclick=()=>{
-  if(saved.has(item.date)) saved.delete(item.date);
-  else saved.add(item.date);
   try {
-   localStorage.setItem("space-favorites",JSON.stringify([...saved]));
-  } catch(e) {}
-  render();
- };
+    const url = new URL(value);
+    if (url.protocol === "https:") return url.href;
+  } catch (error) {}
 
- const link=document.createElement("a");
- link.className="small";
- link.textContent="Read on NASA ↗";
- link.target="_blank";
- link.rel="noopener noreferrer";
- const destination=item.permalink || item.url || "https://science.nasa.gov/apod/";
- link.href=destination.startsWith("https://")
-   ? destination : "https://science.nasa.gov/apod/";
+  return "https://science.nasa.gov/apod/";
+}
 
- buttons.append(save,link);
- body.append(date,title,description,buttons);
- card.appendChild(body);
+// ----------------------------------
+// Detail modal
+// ----------------------------------
 
- return card;
+function openDetails(item) {
+  const modal = el("details");
+
+  el("detailTitle").textContent = plain(item.title);
+  el("detailDate").textContent = item.date;
+  el("detailExplanation").textContent =
+    plain(item.explanation);
+
+  el("detailLink").href = nasaPage(item);
+
+  const media = el("detailMedia");
+  media.replaceChildren();
+
+  const url = imageUrl(item);
+
+  if (url) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = plain(item.alt || item.title);
+    media.appendChild(img);
+  } else {
+    const p = document.createElement("p");
+    p.textContent = item.media_type === "video"
+      ? "This entry is a video. Open it on NASA's website."
+      : "An image preview is unavailable.";
+    media.appendChild(p);
+  }
+
+  modal.showModal();
+}
+
+el("closeDetails").onclick = () => {
+  el("details").close();
+};
+
+el("details").addEventListener("click", event => {
+  if (event.target === el("details")) {
+    el("details").close();
+  }
+});
+
+// ----------------------------------
+// Gallery
+// ----------------------------------
+
+function createCard(item) {
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const preview = document.createElement("button");
+  preview.type = "button";
+  preview.className = "preview";
+  preview.setAttribute(
+    "aria-label",
+    "View details for " + plain(item.title)
+  );
+
+  const url = imageUrl(item);
+
+  if (url) {
+    const img = document.createElement("img");
+    img.className = "photo";
+    img.src = url;
+    img.loading = "lazy";
+    img.alt = plain(item.alt || item.title);
+
+    img.onerror = () => {
+      const fallback = document.createElement("div");
+      fallback.className = "missing";
+      fallback.textContent = "Image unavailable";
+      img.replaceWith(fallback);
+    };
+
+    preview.appendChild(img);
+  } else {
+    const missing = document.createElement("div");
+    missing.className = "missing";
+    missing.textContent = item.media_type === "video"
+      ? "🎬 Video entry — tap for details"
+      : "Image unavailable";
+    preview.appendChild(missing);
+  }
+
+  preview.onclick = () => openDetails(item);
+  card.appendChild(preview);
+
+  const body = document.createElement("div");
+  body.className = "body";
+
+  const date = document.createElement("div");
+  date.className = "date";
+  date.textContent = item.date;
+
+  const title = document.createElement("h3");
+  title.textContent = plain(item.title) || "Space discovery";
+
+  const description = document.createElement("p");
+  description.textContent =
+    plain(item.explanation).slice(0, 125) + "…";
+
+  const buttons = document.createElement("div");
+  buttons.className = "buttons";
+
+  const save = document.createElement("button");
+  save.type = "button";
+  save.className = "small";
+  save.textContent = saved.has(item.date)
+    ? "★ Saved" : "☆ Save";
+
+  save.onclick = () => {
+    if (saved.has(item.date)) {
+      saved.delete(item.date);
+    } else {
+      saved.add(item.date);
+    }
+
+    try {
+      localStorage.setItem(
+        "space-favorites",
+        JSON.stringify([...saved])
+      );
+    } catch (error) {}
+
+    render();
+  };
+
+  const detailsButton = document.createElement("button");
+  detailsButton.type = "button";
+  detailsButton.className = "small";
+  detailsButton.textContent = "Read details";
+  detailsButton.onclick = () => openDetails(item);
+
+  buttons.append(save, detailsButton);
+  body.append(date, title, description, buttons);
+  card.appendChild(body);
+
+  return card;
 }
 
 function render() {
- const gallery=el("gallery");
- gallery.replaceChildren();
+  const gallery = el("gallery");
+  gallery.replaceChildren();
 
- const visible=entries.filter(item=>
-  !favoritesOnly || saved.has(item.date)
- );
+  const visible = entries.filter(item =>
+    !favoritesOnly || saved.has(item.date)
+  );
 
- el("favorites").textContent=favoritesOnly
-   ? "★ Show all" : "☆ Favorites only";
- el("count").textContent=visible.length+" discoveries shown";
+  el("favorites").textContent = favoritesOnly
+    ? "★ Show all" : "☆ Favorites only";
 
- if(!visible.length) {
-  const empty=document.createElement("div");
-  empty.className="empty";
-  empty.textContent="No pictures to show. Try a different date range.";
-  gallery.appendChild(empty);
- } else {
-  visible.forEach(item=>gallery.appendChild(createCard(item)));
- }
+  el("count").textContent =
+    visible.length + " discoveries shown";
+
+  if (!visible.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent =
+      "No discoveries to show. Try another date range.";
+    gallery.appendChild(empty);
+  } else {
+    visible.forEach(item => {
+      gallery.appendChild(createCard(item));
+    });
+  }
 }
+
+// ----------------------------------
+// Fetch NASA API data
+// ----------------------------------
 
 async function searchNASA() {
- const start=el("start").value;
- const end=el("end").value;
- const today=iso(new Date());
+  const start = el("start").value;
+  const end = el("end").value;
+  const today = iso(new Date());
 
- if(!start || !end) {
-  setStatus("Please select both dates.");
-  return;
- }
-
- if(start>end) {
-  setStatus("The start date must be before the end date.");
-  return;
- }
-
- if(start<"1995-06-16" || end>today) {
-  setStatus("Please select dates between June 16, 1995 and today.");
-  return;
- }
-
- const days=Math.round(
-  (new Date(end+"T12:00:00Z")-
-   new Date(start+"T12:00:00Z"))/86400000
- )+1;
-
- if(days>14) {
-  setStatus("Choose a range of 14 days or less.");
-  return;
- }
-
- const btn=el("search");
- btn.disabled=true;
- btn.textContent="Loading...";
- setStatus("Contacting NASA...");
-
- try {
-  const params=new URLSearchParams({
-   date_from:apiDate(start),
-   date_to:apiDate(end),
-   per_page:String(days)
-  });
-
-  const response=await fetch(API+"?"+params);
-
-  if(!response.ok) {
-   throw new Error("NASA returned an error.");
+  if (!start || !end) {
+    setStatus("Please select both dates.");
+    return;
   }
 
-  const data=await response.json();
-
-  if(!Array.isArray(data)) {
-   throw new Error("Unexpected NASA response.");
+  if (start > end) {
+    setStatus("Start date must be before end date.");
+    return;
   }
 
-  entries=data
-   .filter(item=>item.date>=start && item.date<=end)
-   .sort((a,b)=>b.date.localeCompare(a.date));
+  if (start < "1995-06-16" || end > today) {
+    setStatus(
+      "Choose dates between June 16, 1995 and today."
+    );
+    return;
+  }
 
-  favoritesOnly=false;
-  render();
+  const days = Math.round(
+    (
+      new Date(end + "T12:00:00Z") -
+      new Date(start + "T12:00:00Z")
+    ) / 86400000
+  ) + 1;
 
-  setStatus("Loaded "+entries.length+" NASA discoveries!");
+  if (days > 14) {
+    setStatus("Choose a range of 14 days or less.");
+    return;
+  }
 
- } catch(error) {
-  entries=[];
-  render();
-  setStatus("NASA could not load right now. Check your connection and try again.");
- } finally {
-  btn.disabled=false;
-  btn.textContent="Explore photos ↗";
- }
+  const button = el("search");
+  button.disabled = true;
+  button.textContent = "Loading...";
+
+  setStatus("🔄 Loading space photos...");
+
+  try {
+    const params = new URLSearchParams({
+      date_from: apiDate(start),
+      date_to: apiDate(end),
+      per_page: String(days)
+    });
+
+    // Service worker handles caching this request.
+    const response = await fetch(API + "?" + params);
+
+    if (!response.ok) {
+      throw new Error("NASA response error");
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Unexpected NASA response");
+    }
+
+    entries = data
+      .filter(item =>
+        item.date >= start && item.date <= end
+      )
+      .sort((a, b) =>
+        b.date.localeCompare(a.date)
+      );
+
+    favoritesOnly = false;
+    render();
+
+    setStatus(
+      "Loaded " + entries.length +
+      " NASA discoveries!" +
+      (navigator.onLine
+        ? ""
+        : " Showing cached data while offline.")
+    );
+
+  } catch (error) {
+    entries = [];
+    render();
+
+    setStatus(
+      "NASA couldn't load. If you're offline, " +
+      "try a date range you previously opened while online."
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "Explore photos ↗";
+  }
 }
 
-el("form").addEventListener("submit",e=>{
- e.preventDefault();
- searchNASA();
+// ----------------------------------
+// Search buttons
+// ----------------------------------
+
+el("form").addEventListener("submit", event => {
+  event.preventDefault();
+  searchNASA();
 });
 
-document.querySelectorAll("[data-days]").forEach(button=>{
- button.onclick=()=>setRange(Number(button.dataset.days));
+document.querySelectorAll("[data-days]").forEach(button => {
+  button.onclick = () => {
+    setRange(Number(button.dataset.days));
+  };
 });
 
-el("surprise").onclick=()=>{
- const year=2010+Math.floor(Math.random()*16);
- const month=1+Math.floor(Math.random()*12);
- const day=1+Math.floor(Math.random()*15);
- const start=year+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
- el("start").value=start;
- el("end").value=shift(start,6);
- setStatus("Surprise week selected! Click Explore photos.");
+el("surprise").onclick = () => {
+  const year = 2010 + Math.floor(Math.random() * 16);
+  const month = 1 + Math.floor(Math.random() * 12);
+  const day = 1 + Math.floor(Math.random() * 15);
+
+  const start = year + "-" +
+    String(month).padStart(2, "0") + "-" +
+    String(day).padStart(2, "0");
+
+  el("start").value = start;
+  el("end").value = shift(start, 6);
+
+  setStatus("Surprise week selected!");
 };
 
-el("favorites").onclick=()=>{
- favoritesOnly=!favoritesOnly;
- render();
+el("favorites").onclick = () => {
+  favoritesOnly = !favoritesOnly;
+  render();
 };
 
-const today=iso(new Date());
-el("start").max=today;
-el("end").max=today;
+// ----------------------------------
+// Random space facts
+// ----------------------------------
+
+const facts = [
+  "A day on Venus is longer than a year on Venus.",
+  "Sunlight takes about 8 minutes to reach Earth.",
+  "Jupiter is the largest planet in our solar system.",
+  "The Moon is slowly moving away from Earth.",
+  "Neptune has extremely fast winds.",
+  "The Milky Way contains billions of stars.",
+  "Saturn's rings are mostly made of ice particles."
+];
+
+el("spaceFact").textContent =
+  facts[Math.floor(Math.random() * facts.length)];
+
+// ----------------------------------
+// Offline indicator
+// ----------------------------------
+
+function checkConnection() {
+  el("offline-banner").style.display =
+    navigator.onLine ? "none" : "block";
+}
+
+window.addEventListener("online", checkConnection);
+window.addEventListener("offline", checkConnection);
+
+checkConnection();
+
+// ----------------------------------
+// Service worker registration
+// ----------------------------------
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js")
+    .then(() => {
+      console.log("NASA service worker registered");
+    })
+    .catch(error => {
+      console.error("Service worker error:", error);
+      appMessage("Offline setup could not finish.");
+    });
+}
+
+// ----------------------------------
+// Custom PWA install prompt
+// ----------------------------------
+
+let deferredPrompt = null;
+
+const installButton = el("installApp");
+
+function alreadyInstalled() {
+  return window.matchMedia(
+    "(display-mode: standalone)"
+  ).matches || window.navigator.standalone === true;
+}
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredPrompt = event;
+  appMessage("Mission Log is ready to install!");
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredPrompt = null;
+  installButton.textContent = "✓ App Installed";
+  appMessage("Mission Log installed successfully!");
+});
+
+installButton.addEventListener("click", async () => {
+
+  if (alreadyInstalled()) {
+    appMessage("You're already using the installed app!");
+    return;
+  }
+
+  if (deferredPrompt) {
+    const prompt = deferredPrompt;
+    deferredPrompt = null;
+
+    await prompt.prompt();
+
+    const choice = await prompt.userChoice;
+
+    if (choice.outcome === "accepted") {
+      appMessage("Install accepted!");
+    } else {
+      appMessage("Installation canceled.");
+    }
+
+  } else {
+    const isIOS = /iPad|iPhone|iPod/.test(
+      navigator.userAgent
+    );
+
+    if (isIOS) {
+      appMessage(
+        "On iPhone: open in Safari, tap Share, " +
+        "then Add to Home Screen."
+      );
+    } else {
+      appMessage(
+        "If no install popup appears, open the " +
+        "browser menu and choose Install App " +
+        "or Add to Home Screen."
+      );
+    }
+  }
+});
+
+// ----------------------------------
+// Notification permission
+// ----------------------------------
+
+el("notifications").addEventListener(
+  "click",
+  async () => {
+
+    if (!("Notification" in window)) {
+      appMessage(
+        "Notifications aren't supported in this browser."
+      );
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      appMessage(
+        "Notifications require HTTPS."
+      );
+      return;
+    }
+
+    try {
+      const permission =
+        await Notification.requestPermission();
+
+      if (permission === "granted") {
+        appMessage("🔔 Notifications allowed!");
+      } else if (permission === "denied") {
+        appMessage(
+          "Notifications blocked. You can change " +
+          "this in your browser settings."
+        );
+      } else {
+        appMessage(
+          "Notification permission wasn't granted."
+        );
+      }
+
+    } catch (error) {
+      appMessage(
+        "This browser couldn't request notification permission."
+      );
+    }
+  }
+);
+
+// ----------------------------------
+// Starting dates
+// ----------------------------------
+
+const today = iso(new Date());
+
+el("start").max = today;
+el("end").max = today;
+
 setRange(7);
+
+if (alreadyInstalled()) {
+  installButton.textContent = "✓ App Installed";
+}
+
 </script>
 </body>
 </html>
